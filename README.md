@@ -16,9 +16,18 @@ Ein schlankes Chrome-/Chromium-Addon, das neue Twitch-Chatnachrichten weich ins 
 4. Diesen Ordner auswählen.
 5. Eine bereits offene Twitch-Seite einmal neu laden.
 
-Über das Erweiterungssymbol lässt sich Smooth Scroll an-/ausschalten und die Geschwindigkeit einstellen.
+Über das Erweiterungssymbol lassen sich Smooth Scroll, Geschwindigkeit und Sprache einstellen.
 
 > Falls Twitch ToolKit parallel installiert bleibt, dort dessen eigene Option „Smooth Scrolling“ deaktivieren, damit nicht zwei Scroll-Animationen gleichzeitig laufen.
+
+## Release erstellen
+
+```bash
+npm install
+npm run release
+```
+
+Der interaktive Terminal-Dialog erhöht die Version als Patch, Minor, Major oder auf einen eigenen Wert im Format `X.Y.Z`. Manifest und npm-Metadaten werden gemeinsam aktualisiert. Anschließend wird ausschließlich der Inhalt der Erweiterung als `release/twitch-smooth-scroll-vVERSION.zip` gepackt.
 
 ## Technischer Hinweis
 
