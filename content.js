@@ -34,6 +34,8 @@
       this.messageContainer = null;
       this.scrollContainer = null;
       this.messageObserver = null;
+      this.resizeObserver = null;
+      this.previousScrollStyles = null;
       this.animationFrame = 0;
       this.lastFrameTime = 0;
       this.lastScrollTop = 0;
@@ -43,6 +45,7 @@
       this.followingBeforePointer = true;
 
       this.onMutations = this.onMutations.bind(this);
+      this.onResize = this.onResize.bind(this);
       this.onScroll = this.onScroll.bind(this);
       this.onWheel = this.onWheel.bind(this);
       this.onPointerDown = this.onPointerDown.bind(this);
@@ -152,14 +155,21 @@
       this.installScrollControlStyle();
       this.messageContainer = chat.messageContainer;
       this.scrollContainer = chat.scrollContainer;
+      this.takeControlOfScroller();
       this.lastScrollTop = this.scrollContainer.scrollTop;
       this.following = this.distanceFromBottom() <= FOLLOW_DISTANCE_PX;
 
       this.messageObserver = new MutationObserver(this.onMutations);
       this.messageObserver.observe(this.messageContainer, {
         childList: true,
+        characterData: true,
         subtree: true
       });
+
+      if (typeof ResizeObserver === 'function') {
+        this.resizeObserver = new ResizeObserver(this.onResize);
+        this.resizeObserver.observe(this.messageContainer);
+      }
 
       this.scrollContainer.addEventListener('scroll', this.onScroll, { passive: true });
       this.scrollContainer.addEventListener('wheel', this.onWheel, { passive: true });
@@ -174,12 +184,15 @@
       this.stopAnimation();
       this.messageObserver?.disconnect();
       this.messageObserver = null;
+      this.resizeObserver?.disconnect();
+      this.resizeObserver = null;
 
       if (this.scrollContainer) {
         this.scrollContainer.removeEventListener('scroll', this.onScroll);
         this.scrollContainer.removeEventListener('wheel', this.onWheel);
         this.scrollContainer.removeEventListener('pointerdown', this.onPointerDown);
       }
+      this.restoreScrollerStyles();
       window.removeEventListener('pointerup', this.onPointerUp);
       window.removeEventListener('pointercancel', this.onPointerUp);
       window.removeEventListener('keydown', this.onKeyDown);
@@ -205,6 +218,39 @@
       (document.head || document.documentElement)?.appendChild(style);
     }
 
+    takeControlOfScroller() {
+      const style = this.scrollContainer?.style;
+      if (!style?.setProperty) return;
+
+      this.previousScrollStyles = {
+        behavior: style.getPropertyValue('scroll-behavior'),
+        behaviorPriority: style.getPropertyPriority('scroll-behavior'),
+        anchor: style.getPropertyValue('overflow-anchor'),
+        anchorPriority: style.getPropertyPriority('overflow-anchor')
+      };
+      style.setProperty('scroll-behavior', 'auto', 'important');
+      style.setProperty('overflow-anchor', 'none', 'important');
+    }
+
+    restoreScrollerStyles() {
+      const style = this.scrollContainer?.style;
+      const previous = this.previousScrollStyles;
+      this.previousScrollStyles = null;
+      if (!style?.setProperty || !previous) return;
+
+      if (previous.behavior) {
+        style.setProperty('scroll-behavior', previous.behavior, previous.behaviorPriority);
+      } else {
+        style.removeProperty('scroll-behavior');
+      }
+
+      if (previous.anchor) {
+        style.setProperty('overflow-anchor', previous.anchor, previous.anchorPriority);
+      } else {
+        style.removeProperty('overflow-anchor');
+      }
+    }
+
     watchdogTick() {
       this.bindChat();
 
@@ -217,6 +263,7 @@
         this.scrollContainer?.isConnected &&
         this.distanceFromBottom() > 0.5
       ) {
+        this.interceptNativeJump();
         this.startAnimation();
       }
     }
@@ -292,11 +339,7 @@
       // Twitch sometimes performs its own instant jump after committing a new
       // message. Restore the last rendered position before paint and let our
       // single RAF loop animate the same distance instead.
-      if (this.following && currentScrollTop > this.lastScrollTop + 2) {
-        const previousScrollTop = this.lastScrollTop;
-        this.stopAnimation();
-        this.scrollContainer.scrollTop = previousScrollTop;
-        this.lastScrollTop = previousScrollTop;
+      if (this.following && this.interceptNativeJump()) {
         this.startAnimation();
         return;
       }
@@ -311,9 +354,29 @@
     }
 
     onMutations(mutations) {
-      const hasAddedContent = mutations.some((mutation) => mutation.addedNodes.length > 0);
-      if (!hasAddedContent || !this.following || this.pointerActive) return;
+      if (!mutations.length || !this.following || this.pointerActive) return;
+      this.interceptNativeJump();
       this.startAnimation();
+    }
+
+    onResize() {
+      if (!this.following || this.pointerActive) return;
+      this.interceptNativeJump();
+      this.startAnimation();
+    }
+
+    interceptNativeJump() {
+      const container = this.scrollContainer;
+      if (!container || !this.following || this.pointerActive) return false;
+
+      const targetScrollTop = Math.max(0, container.scrollHeight - container.clientHeight);
+      const previousScrollTop = Math.min(this.lastScrollTop, targetScrollTop);
+      if (container.scrollTop <= previousScrollTop + 2) return false;
+
+      this.stopAnimation();
+      container.scrollTop = previousScrollTop;
+      this.lastScrollTop = previousScrollTop;
+      return true;
     }
 
     startAnimation() {

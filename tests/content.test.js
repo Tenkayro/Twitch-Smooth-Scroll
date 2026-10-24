@@ -9,6 +9,7 @@ const listeners = new Map();
 const windowListeners = new Map();
 const frames = [];
 let observerCallback;
+let resizeCallback;
 let watchdogCallback;
 let frameTime = 0;
 
@@ -74,6 +75,13 @@ const context = {
     observe() {}
     disconnect() {}
   },
+  ResizeObserver: class {
+    constructor(callback) {
+      resizeCallback = callback;
+    }
+    observe() {}
+    disconnect() {}
+  },
   requestAnimationFrame(callback) {
     frames.push(callback);
     return frames.length;
@@ -106,6 +114,27 @@ observerCallback([{ addedNodes: [{}] }]);
 drainFrames();
 assert.equal(scrollContainer.scrollTop, 640, 'new message should be followed to the bottom');
 
+scrollContainer.scrollHeight = 1080;
+scrollContainer.scrollTop = 680;
+observerCallback([{ addedNodes: [{}] }]);
+assert.equal(
+  scrollContainer.scrollTop,
+  640,
+  'a native Twitch jump must be restored even before its scroll event arrives'
+);
+drainFrames();
+assert.equal(scrollContainer.scrollTop, 680, 'the intercepted native jump should be replayed smoothly');
+
+scrollContainer.scrollHeight = 1120;
+resizeCallback();
+drainFrames();
+assert.equal(scrollContainer.scrollTop, 720, '7TV layout changes should animate without waiting for watchdog');
+
+scrollContainer.scrollHeight = 1160;
+observerCallback([{ addedNodes: [] }]);
+drainFrames();
+assert.equal(scrollContainer.scrollTop, 760, 'recycled Twitch message nodes should still trigger following');
+
 for (let message = 0; message < 120; message += 1) {
   scrollContainer.scrollHeight += 24;
   observerCallback([{ addedNodes: [{}] }]);
@@ -135,6 +164,7 @@ listeners.get('wheel')({ deltaY: -100 });
 scrollContainer.scrollTop = 400;
 scrollContainer.scrollHeight = 1080;
 observerCallback([{ addedNodes: [{}] }]);
+resizeCallback();
 assert.equal(frames.length, 0, 'scrolling upward should pause chat following');
 
 scrollContainer.scrollTop = 680;
