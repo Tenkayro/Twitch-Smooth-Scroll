@@ -98,7 +98,9 @@
 
       while (current && current !== document.body) {
         const style = window.getComputedStyle(current);
-        const canScroll = /(auto|scroll|overlay)/.test(style.overflowY);
+        // Twitch also uses overflow:hidden for programmatically scrollable chat
+        // elements, so only visible/clip are definitely not scroll containers.
+        const canScroll = !/(visible|clip)/.test(style.overflowY);
         const isKnownScroller = SCROLL_CONTAINER_SELECTORS.some((selector) => current.matches?.(selector));
         if ((canScroll || isKnownScroller) && current.scrollHeight > current.clientHeight) {
           return current;
@@ -114,6 +116,11 @@
       if (!messageContainer) return null;
 
       const scrollContainer =
+        // Match Twitch ToolKit's working behavior first: on Twitch this message
+        // container is often scrollable even when its overflow is "hidden".
+        (messageContainer.scrollHeight > messageContainer.clientHeight + 1
+          ? messageContainer
+          : null) ||
         this.findScrollableAncestor(messageContainer) ||
         this.queryFirst(SCROLL_CONTAINER_SELECTORS) ||
         messageContainer;
@@ -259,6 +266,18 @@
         return;
       }
 
+      // Twitch sometimes performs its own instant jump after committing a new
+      // message. Restore the last rendered position before paint and let our
+      // single RAF loop animate the same distance instead.
+      if (this.following && currentScrollTop > this.lastScrollTop + 2) {
+        const previousScrollTop = this.lastScrollTop;
+        this.stopAnimation();
+        this.scrollContainer.scrollTop = previousScrollTop;
+        this.lastScrollTop = previousScrollTop;
+        this.startAnimation();
+        return;
+      }
+
       // Do not interpret Twitch's virtual-list repositioning as user input.
       // Explicit wheel, pointer and keyboard handlers pause following instead.
       if (!this.animationFrame && this.distanceFromBottom() <= RESUME_DISTANCE_PX) {
@@ -289,6 +308,8 @@
       const targetScrollTop = Math.max(0, container.scrollHeight - container.clientHeight);
       if (distance <= 0.5) {
         container.scrollTop = targetScrollTop;
+        this.lastScrollTop = targetScrollTop;
+        this.stalledFrames = 0;
         return;
       }
 

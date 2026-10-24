@@ -125,11 +125,18 @@ watchdogCallback();
 drainFrames();
 assert.equal(scrollContainer.scrollTop, 840, 'lost pointerup should recover when the window loses focus');
 
+scrollContainer.scrollHeight = 1280;
+scrollContainer.scrollTop = 880;
+listeners.get('scroll')();
+assert.equal(scrollContainer.scrollTop, 840, 'an instant Twitch jump should be restored before animation');
+drainFrames();
+assert.equal(scrollContainer.scrollTop, 880, 'an instant Twitch jump should be replayed smoothly');
+
 listeners.get('pointerdown')();
 scrollContainer.scrollTop = 500;
 listeners.get('scroll')();
 windowListeners.get('pointerup')();
-scrollContainer.scrollHeight = 1280;
+scrollContainer.scrollHeight = 1320;
 observerCallback([{ addedNodes: [{}] }]);
 assert.equal(frames.length, 0, 'dragging the scrollbar upward should pause following');
 
