@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Twitch Smooth Scroll",
+  "version": "1.0.0",
+  "description": "Smoothly follows new Twitch chat messages without changing the chat or 7TV emotes.",
+  "author": "Tenkayro",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.twitch.tv/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.twitch.tv/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_title": "Twitch Smooth Scroll",
+    "default_popup": "popup.html"
+  }
+}

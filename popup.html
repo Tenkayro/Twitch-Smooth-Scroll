@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Twitch Smooth Scroll</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <div class="title-row">
+        <div class="mark" aria-hidden="true">S</div>
+        <div>
+          <h1>Twitch Smooth Scroll</h1>
+          <p class="author">von Tenkayro</p>
+        </div>
+      </div>
+
+      <label class="toggle-row" for="enabled">
+        <span>
+          <strong>Smooth Scroll</strong>
+          <small>Chat weich nachführen</small>
+        </span>
+        <span class="switch">
+          <input id="enabled" type="checkbox">
+          <span class="slider"></span>
+        </span>
+      </label>
+
+      <div class="speed-row">
+        <label for="speed">Geschwindigkeit</label>
+        <select id="speed">
+          <option value="0.65">Sanft</option>
+          <option value="1">Normal</option>
+          <option value="1.5">Schnell</option>
+          <option value="2">Sehr schnell</option>
+        </select>
+      </div>
+
+      <p class="note">Kompatibel mit dem normalen Twitch-Chat und 7TV. Beim Hochscrollen wird das automatische Nachführen pausiert.</p>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
