@@ -26,16 +26,8 @@ main {
 }
 
 .mark {
-  display: grid;
   width: 38px;
   height: 38px;
-  place-items: center;
-  border-radius: 11px;
-  color: white;
-  background: linear-gradient(145deg, #bf94ff, #772ce8);
-  box-shadow: 0 8px 24px rgba(119, 44, 232, 0.28);
-  font-size: 20px;
-  font-weight: 800;
 }
 
 h1 {

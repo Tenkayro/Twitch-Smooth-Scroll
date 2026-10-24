@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Twitch Smooth Scroll</title>
+  <rect x="16" y="16" width="480" height="480" rx="104" fill="#772ce8"/>
+  <path d="M105 210h132M105 286h96" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="round"/>
+  <path d="M185 124c101 0 183 82 183 183v52" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round"/>
+  <path d="M310 345l58 58 58-58" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
