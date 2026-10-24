@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Twitch sohbetini akıcı biçimde takip eder. 7TV ile uyumlu."
+  },
+  "active": {
+    "message": "Etkin"
+  },
+  "speed": {
+    "message": "Hız"
+  },
+  "speedGentle": {
+    "message": "Yumuşak"
+  },
+  "speedNormal": {
+    "message": "Normal"
+  },
+  "speedFast": {
+    "message": "Hızlı"
+  },
+  "speedVeryFast": {
+    "message": "Çok hızlı"
+  },
+  "saved": {
+    "message": "Kaydedildi"
+  }
+}

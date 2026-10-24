@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "流暢跟隨 Twitch 聊天。相容 7TV。"
+  },
+  "active": {
+    "message": "啟用"
+  },
+  "speed": {
+    "message": "速度"
+  },
+  "speedGentle": {
+    "message": "柔和"
+  },
+  "speedNormal": {
+    "message": "正常"
+  },
+  "speedFast": {
+    "message": "快速"
+  },
+  "speedVeryFast": {
+    "message": "非常快"
+  },
+  "saved": {
+    "message": "已儲存"
+  }
+}

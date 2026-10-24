@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Glatko prati Twitch chat. Kompatibilno sa 7TV-om."
+  },
+  "active": {
+    "message": "Aktivno"
+  },
+  "speed": {
+    "message": "Brzina"
+  },
+  "speedGentle": {
+    "message": "Nježno"
+  },
+  "speedNormal": {
+    "message": "Normalno"
+  },
+  "speedFast": {
+    "message": "Brzo"
+  },
+  "speedVeryFast": {
+    "message": "Vrlo brzo"
+  },
+  "saved": {
+    "message": "Spremljeno"
+  }
+}

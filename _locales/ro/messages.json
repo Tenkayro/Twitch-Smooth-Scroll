@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Urmărește fluent chatul Twitch. Compatibil cu 7TV."
+  },
+  "active": {
+    "message": "Activ"
+  },
+  "speed": {
+    "message": "Viteză"
+  },
+  "speedGentle": {
+    "message": "Lent"
+  },
+  "speedNormal": {
+    "message": "Normal"
+  },
+  "speedFast": {
+    "message": "Rapid"
+  },
+  "speedVeryFast": {
+    "message": "Foarte rapid"
+  },
+  "saved": {
+    "message": "Salvat"
+  }
+}

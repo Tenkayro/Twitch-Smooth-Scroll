@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "עוקב בצורה חלקה אחר הצ׳אט של Twitch. תואם ל־7TV."
+  },
+  "active": {
+    "message": "פעיל"
+  },
+  "speed": {
+    "message": "מהירות"
+  },
+  "speedGentle": {
+    "message": "עדין"
+  },
+  "speedNormal": {
+    "message": "רגיל"
+  },
+  "speedFast": {
+    "message": "מהיר"
+  },
+  "speedVeryFast": {
+    "message": "מהיר מאוד"
+  },
+  "saved": {
+    "message": "נשמר"
+  }
+}

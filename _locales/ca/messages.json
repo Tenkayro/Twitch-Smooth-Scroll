@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Segueix el xat de Twitch suaument. Compatible amb 7TV."
+  },
+  "active": {
+    "message": "Actiu"
+  },
+  "speed": {
+    "message": "Velocitat"
+  },
+  "speedGentle": {
+    "message": "Suau"
+  },
+  "speedNormal": {
+    "message": "Normal"
+  },
+  "speedFast": {
+    "message": "Ràpid"
+  },
+  "speedVeryFast": {
+    "message": "Molt ràpid"
+  },
+  "saved": {
+    "message": "Desat"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Cuộn theo trò chuyện Twitch mượt mà. Tương thích với 7TV."
+  },
+  "active": {
+    "message": "Bật"
+  },
+  "speed": {
+    "message": "Tốc độ"
+  },
+  "speedGentle": {
+    "message": "Nhẹ"
+  },
+  "speedNormal": {
+    "message": "Bình thường"
+  },
+  "speedFast": {
+    "message": "Nhanh"
+  },
+  "speedVeryFast": {
+    "message": "Rất nhanh"
+  },
+  "saved": {
+    "message": "Đã lưu"
+  }
+}

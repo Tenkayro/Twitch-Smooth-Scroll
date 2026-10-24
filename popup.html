@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,12 +10,12 @@
     <main>
       <header>
         <img class="mark" src="icons/icon.svg" alt="">
-        <h1>Twitch Smooth Scroll</h1>
+        <h1 data-i18n="extensionName">Twitch Smooth Scroll</h1>
       </header>
 
       <section>
         <label class="row" for="enabled">
-          <span>Aktiv</span>
+          <span data-i18n="active">Active</span>
           <span class="switch">
             <input id="enabled" type="checkbox">
             <span class="slider"></span>
@@ -23,12 +23,12 @@
         </label>
 
         <label class="row" for="speed">
-          <span>Tempo</span>
+          <span data-i18n="speed">Speed</span>
           <select id="speed">
-            <option value="0.65">Sanft</option>
-            <option value="1">Normal</option>
-            <option value="1.5">Schnell</option>
-            <option value="2">Sehr schnell</option>
+            <option value="0.65" data-i18n="speedGentle">Gentle</option>
+            <option value="1" data-i18n="speedNormal">Normal</option>
+            <option value="1.5" data-i18n="speedFast">Fast</option>
+            <option value="2" data-i18n="speedVeryFast">Very fast</option>
           </select>
         </label>
       </section>

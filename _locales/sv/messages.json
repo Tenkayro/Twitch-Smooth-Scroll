@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Följer Twitch-chatten mjukt. Kompatibel med 7TV."
+  },
+  "active": {
+    "message": "Aktiv"
+  },
+  "speed": {
+    "message": "Hastighet"
+  },
+  "speedGentle": {
+    "message": "Mjuk"
+  },
+  "speedNormal": {
+    "message": "Normal"
+  },
+  "speedFast": {
+    "message": "Snabb"
+  },
+  "speedVeryFast": {
+    "message": "Mycket snabb"
+  },
+  "saved": {
+    "message": "Sparat"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Plynule sleduje chat na Twitchi. Kompatibilní se 7TV."
+  },
+  "active": {
+    "message": "Aktivní"
+  },
+  "speed": {
+    "message": "Rychlost"
+  },
+  "speedGentle": {
+    "message": "Jemně"
+  },
+  "speedNormal": {
+    "message": "Normální"
+  },
+  "speedFast": {
+    "message": "Rychle"
+  },
+  "speedVeryFast": {
+    "message": "Velmi rychle"
+  },
+  "saved": {
+    "message": "Uloženo"
+  }
+}

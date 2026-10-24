@@ -7,13 +7,27 @@
   const status = document.querySelector('#status');
   let statusTimer = 0;
 
+  function localizePopup() {
+    const language = chrome.i18n.getUILanguage().replace('_', '-');
+    document.documentElement.lang = language;
+    document.documentElement.dir = /^(ar|he|fa|ur)(-|$)/i.test(language) ? 'rtl' : 'ltr';
+    document.title = chrome.i18n.getMessage('extensionName');
+
+    document.querySelectorAll('[data-i18n]').forEach((element) => {
+      const message = chrome.i18n.getMessage(element.dataset.i18n);
+      if (message) element.textContent = message;
+    });
+  }
+
   function showSaved() {
-    status.textContent = 'Gespeichert';
+    status.textContent = chrome.i18n.getMessage('saved');
     window.clearTimeout(statusTimer);
     statusTimer = window.setTimeout(() => {
       status.textContent = '';
     }, 1200);
   }
+
+  localizePopup();
 
   chrome.storage.sync.get(DEFAULTS, (settings) => {
     enabledInput.checked = settings.enabled !== false;

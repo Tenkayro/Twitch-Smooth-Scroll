@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Плавно следует за чатом Twitch. Совместимо с 7TV."
+  },
+  "active": {
+    "message": "Активно"
+  },
+  "speed": {
+    "message": "Скорость"
+  },
+  "speedGentle": {
+    "message": "Плавно"
+  },
+  "speedNormal": {
+    "message": "Обычно"
+  },
+  "speedFast": {
+    "message": "Быстро"
+  },
+  "speedVeryFast": {
+    "message": "Очень быстро"
+  },
+  "saved": {
+    "message": "Сохранено"
+  }
+}

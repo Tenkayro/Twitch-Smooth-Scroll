@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Plynulo sleduje chat na Twitchi. Kompatibilné so 7TV."
+  },
+  "active": {
+    "message": "Aktívne"
+  },
+  "speed": {
+    "message": "Rýchlosť"
+  },
+  "speedGentle": {
+    "message": "Jemne"
+  },
+  "speedNormal": {
+    "message": "Normálne"
+  },
+  "speedFast": {
+    "message": "Rýchlo"
+  },
+  "speedVeryFast": {
+    "message": "Veľmi rýchlo"
+  },
+  "saved": {
+    "message": "Uložené"
+  }
+}

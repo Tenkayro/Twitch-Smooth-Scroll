@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Finoman követi a Twitch csevegést. Kompatibilis a 7TV-vel."
+  },
+  "active": {
+    "message": "Aktív"
+  },
+  "speed": {
+    "message": "Sebesség"
+  },
+  "speedGentle": {
+    "message": "Lágy"
+  },
+  "speedNormal": {
+    "message": "Normál"
+  },
+  "speedFast": {
+    "message": "Gyors"
+  },
+  "speedVeryFast": {
+    "message": "Nagyon gyors"
+  },
+  "saved": {
+    "message": "Mentve"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Suit le chat Twitch en douceur. Compatible avec 7TV."
+  },
+  "active": {
+    "message": "Actif"
+  },
+  "speed": {
+    "message": "Vitesse"
+  },
+  "speedGentle": {
+    "message": "Douce"
+  },
+  "speedNormal": {
+    "message": "Normale"
+  },
+  "speedFast": {
+    "message": "Rapide"
+  },
+  "speedVeryFast": {
+    "message": "Très rapide"
+  },
+  "saved": {
+    "message": "Enregistré"
+  }
+}

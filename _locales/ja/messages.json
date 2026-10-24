@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Twitchチャットを滑らかに追従します。7TV対応。"
+  },
+  "active": {
+    "message": "有効"
+  },
+  "speed": {
+    "message": "速度"
+  },
+  "speedGentle": {
+    "message": "ゆっくり"
+  },
+  "speedNormal": {
+    "message": "標準"
+  },
+  "speedFast": {
+    "message": "高速"
+  },
+  "speedVeryFast": {
+    "message": "超高速"
+  },
+  "saved": {
+    "message": "保存しました"
+  }
+}

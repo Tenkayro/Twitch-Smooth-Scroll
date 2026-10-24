@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "เลื่อนตามแชท Twitch อย่างลื่นไหล รองรับ 7TV"
+  },
+  "active": {
+    "message": "เปิดใช้"
+  },
+  "speed": {
+    "message": "ความเร็ว"
+  },
+  "speedGentle": {
+    "message": "นุ่มนวล"
+  },
+  "speedNormal": {
+    "message": "ปกติ"
+  },
+  "speedFast": {
+    "message": "เร็ว"
+  },
+  "speedVeryFast": {
+    "message": "เร็วมาก"
+  },
+  "saved": {
+    "message": "บันทึกแล้ว"
+  }
+}

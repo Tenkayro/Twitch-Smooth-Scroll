@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Ακολουθεί ομαλά τη συνομιλία Twitch. Συμβατό με 7TV."
+  },
+  "active": {
+    "message": "Ενεργό"
+  },
+  "speed": {
+    "message": "Ταχύτητα"
+  },
+  "speedGentle": {
+    "message": "Απαλά"
+  },
+  "speedNormal": {
+    "message": "Κανονική"
+  },
+  "speedFast": {
+    "message": "Γρήγορη"
+  },
+  "speedVeryFast": {
+    "message": "Πολύ γρήγορη"
+  },
+  "saved": {
+    "message": "Αποθηκεύτηκε"
+  }
+}

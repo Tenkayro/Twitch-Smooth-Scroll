@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Maayos na sinusundan ang Twitch chat. Compatible sa 7TV."
+  },
+  "active": {
+    "message": "Aktibo"
+  },
+  "speed": {
+    "message": "Bilis"
+  },
+  "speedGentle": {
+    "message": "Banayad"
+  },
+  "speedNormal": {
+    "message": "Normal"
+  },
+  "speedFast": {
+    "message": "Mabilis"
+  },
+  "speedVeryFast": {
+    "message": "Napakabilis"
+  },
+  "saved": {
+    "message": "Nai-save"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Twitch चैट को सहजता से फ़ॉलो करता है। 7TV के साथ संगत।"
+  },
+  "active": {
+    "message": "सक्रिय"
+  },
+  "speed": {
+    "message": "गति"
+  },
+  "speedGentle": {
+    "message": "सौम्य"
+  },
+  "speedNormal": {
+    "message": "सामान्य"
+  },
+  "speedFast": {
+    "message": "तेज़"
+  },
+  "speedVeryFast": {
+    "message": "बहुत तेज़"
+  },
+  "saved": {
+    "message": "सहेजा गया"
+  }
+}

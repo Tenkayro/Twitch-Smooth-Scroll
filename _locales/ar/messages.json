@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "يتابع دردشة Twitch بسلاسة. متوافق مع 7TV."
+  },
+  "active": {
+    "message": "نشط"
+  },
+  "speed": {
+    "message": "السرعة"
+  },
+  "speedGentle": {
+    "message": "هادئ"
+  },
+  "speedNormal": {
+    "message": "عادي"
+  },
+  "speedFast": {
+    "message": "سريع"
+  },
+  "speedVeryFast": {
+    "message": "سريع جدًا"
+  },
+  "saved": {
+    "message": "تم الحفظ"
+  }
+}

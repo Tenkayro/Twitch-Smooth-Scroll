@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Twitch Smooth Scroll"
+  },
+  "extensionDescription": {
+    "message": "Seuraa Twitch-chattia sujuvasti. Yhteensopiva 7TV:n kanssa."
+  },
+  "active": {
+    "message": "Käytössä"
+  },
+  "speed": {
+    "message": "Nopeus"
+  },
+  "speedGentle": {
+    "message": "Pehmeä"
+  },
+  "speedNormal": {
+    "message": "Normaali"
+  },
+  "speedFast": {
+    "message": "Nopea"
+  },
+  "speedVeryFast": {
+    "message": "Erittäin nopea"
+  },
+  "saved": {
+    "message": "Tallennettu"
+  }
+}
