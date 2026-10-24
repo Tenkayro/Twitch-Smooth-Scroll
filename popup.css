@@ -8,71 +8,59 @@
 }
 
 body {
-  width: 330px;
+  width: 264px;
   margin: 0;
   color: #efeff1;
   background: #18181b;
 }
 
 main {
-  padding: 18px;
+  padding: 14px;
 }
 
-.title-row {
+header {
   display: flex;
   align-items: center;
-  gap: 11px;
-  margin-bottom: 18px;
+  gap: 9px;
+  padding: 2px 2px 13px;
 }
 
 .mark {
-  width: 38px;
-  height: 38px;
+  width: 26px;
+  height: 26px;
 }
 
 h1 {
   margin: 0;
-  font-size: 16px;
-  line-height: 1.25;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1;
 }
 
-.author {
-  margin: 3px 0 0;
-  color: #adadb8;
-  font-size: 11px;
-}
-
-.toggle-row,
-.speed-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 13px;
+section {
+  overflow: hidden;
   border: 1px solid #303036;
   border-radius: 10px;
   background: #1f1f23;
 }
 
-.toggle-row {
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 46px;
+  padding: 8px 11px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.row + .row {
+  border-top: 1px solid #303036;
+}
+
+.row:first-child {
   cursor: pointer;
-}
-
-.toggle-row strong,
-.toggle-row small {
-  display: block;
-}
-
-.toggle-row strong,
-.speed-row label {
-  font-size: 13px;
-  font-weight: 650;
-}
-
-.toggle-row small {
-  margin-top: 3px;
-  color: #adadb8;
-  font-size: 11px;
 }
 
 .switch {
@@ -121,31 +109,25 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-.speed-row {
-  margin-top: 10px;
-}
-
 select {
-  min-width: 112px;
-  padding: 7px 9px;
-  border: 1px solid #46464f;
-  border-radius: 7px;
+  width: 98px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 6px;
   color: #efeff1;
-  background: #0e0e10;
+  background: #2b2b31;
   font: inherit;
-  font-size: 12px;
+  font-size: 11px;
 }
 
-.note {
-  margin: 13px 2px 0;
-  color: #adadb8;
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-.status {
-  min-height: 15px;
-  margin: 8px 2px 0;
-  color: #bf94ff;
-  font-size: 11px;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
