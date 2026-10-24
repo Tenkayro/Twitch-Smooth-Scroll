@@ -24,7 +24,8 @@
 
   const FOLLOW_DISTANCE_PX = 240;
   const RESUME_DISTANCE_PX = 48;
-  const CONTAINER_CHECK_MS = 1000;
+  const WATCHDOG_INTERVAL_MS = 500;
+  const STALL_FRAME_LIMIT = 12;
 
   class TwitchSmoothScroll {
     constructor() {
@@ -37,16 +38,21 @@
       this.lastScrollTop = 0;
       this.following = true;
       this.pointerActive = false;
+      this.pointerStartScrollTop = 0;
+      this.followingBeforePointer = true;
+      this.stalledFrames = 0;
 
       this.onMutations = this.onMutations.bind(this);
       this.onScroll = this.onScroll.bind(this);
       this.onWheel = this.onWheel.bind(this);
       this.onPointerDown = this.onPointerDown.bind(this);
       this.onPointerUp = this.onPointerUp.bind(this);
+      this.onKeyDown = this.onKeyDown.bind(this);
+      this.onWindowBlur = this.onWindowBlur.bind(this);
 
       this.loadSettings();
       this.watchSettings();
-      this.containerTimer = window.setInterval(() => this.bindChat(), CONTAINER_CHECK_MS);
+      this.containerTimer = window.setInterval(() => this.watchdogTick(), WATCHDOG_INTERVAL_MS);
     }
 
     loadSettings() {
@@ -93,7 +99,10 @@
       while (current && current !== document.body) {
         const style = window.getComputedStyle(current);
         const canScroll = /(auto|scroll|overlay)/.test(style.overflowY);
-        if (canScroll && current.scrollHeight > current.clientHeight) return current;
+        const isKnownScroller = SCROLL_CONTAINER_SELECTORS.some((selector) => current.matches?.(selector));
+        if ((canScroll || isKnownScroller) && current.scrollHeight > current.clientHeight) {
+          return current;
+        }
         current = current.parentElement;
       }
 
@@ -145,6 +154,9 @@
       this.scrollContainer.addEventListener('wheel', this.onWheel, { passive: true });
       this.scrollContainer.addEventListener('pointerdown', this.onPointerDown, { passive: true });
       window.addEventListener('pointerup', this.onPointerUp, { passive: true });
+      window.addEventListener('pointercancel', this.onPointerUp, { passive: true });
+      window.addEventListener('keydown', this.onKeyDown, { passive: true });
+      window.addEventListener('blur', this.onWindowBlur);
     }
 
     unbindChat() {
@@ -158,10 +170,30 @@
         this.scrollContainer.removeEventListener('pointerdown', this.onPointerDown);
       }
       window.removeEventListener('pointerup', this.onPointerUp);
+      window.removeEventListener('pointercancel', this.onPointerUp);
+      window.removeEventListener('keydown', this.onKeyDown);
+      window.removeEventListener('blur', this.onWindowBlur);
 
       this.messageContainer = null;
       this.scrollContainer = null;
       this.pointerActive = false;
+      this.stalledFrames = 0;
+    }
+
+    watchdogTick() {
+      this.bindChat();
+
+      // Images, badges and 7TV emotes can change the chat height without adding
+      // another node. Keep following in that case even if MutationObserver is quiet.
+      if (
+        this.settings.enabled &&
+        this.following &&
+        !this.pointerActive &&
+        this.scrollContainer?.isConnected &&
+        this.distanceFromBottom() > 0.5
+      ) {
+        this.startAnimation();
+      }
     }
 
     distanceFromBottom() {
@@ -175,6 +207,7 @@
     }
 
     onWheel(event) {
+      this.pointerActive = false;
       if (event.deltaY < 0) {
         this.following = false;
         this.stopAnimation();
@@ -184,13 +217,37 @@
     }
 
     onPointerDown() {
+      this.followingBeforePointer = this.following;
+      this.pointerStartScrollTop = this.scrollContainer?.scrollTop ?? 0;
       this.pointerActive = true;
       this.stopAnimation();
     }
 
     onPointerUp() {
+      if (!this.pointerActive) return;
+      const currentScrollTop = this.scrollContainer?.scrollTop ?? 0;
+      const dragged = Math.abs(currentScrollTop - this.pointerStartScrollTop) > 2;
       this.pointerActive = false;
-      this.following = this.distanceFromBottom() <= RESUME_DISTANCE_PX;
+      this.following = dragged
+        ? this.distanceFromBottom() <= RESUME_DISTANCE_PX
+        : this.followingBeforePointer || this.distanceFromBottom() <= RESUME_DISTANCE_PX;
+
+      if (this.following) this.startAnimation();
+    }
+
+    onWindowBlur() {
+      // A pointer release outside the tab does not always emit pointerup here.
+      this.onPointerUp();
+    }
+
+    onKeyDown(event) {
+      if (['ArrowUp', 'PageUp', 'Home'].includes(event.key)) {
+        this.following = false;
+        this.stopAnimation();
+      } else if (event.key === 'End') {
+        this.following = true;
+        this.startAnimation();
+      }
     }
 
     onScroll() {
@@ -202,12 +259,10 @@
         return;
       }
 
-      if (!this.animationFrame) {
-        if (currentScrollTop < this.lastScrollTop - 1) {
-          this.following = false;
-        } else if (this.distanceFromBottom() <= RESUME_DISTANCE_PX) {
-          this.following = true;
-        }
+      // Do not interpret Twitch's virtual-list repositioning as user input.
+      // Explicit wheel, pointer and keyboard handlers pause following instead.
+      if (!this.animationFrame && this.distanceFromBottom() <= RESUME_DISTANCE_PX) {
+        this.following = true;
       }
 
       this.lastScrollTop = currentScrollTop;
@@ -246,8 +301,22 @@
       const baseDuration = Math.min(260, Math.max(80, distance * 0.22));
       const duration = baseDuration / this.settings.speed;
       const step = Math.max(0.75, distance * Math.min(1, elapsed / duration));
+      const previousScrollTop = container.scrollTop;
       container.scrollTop = Math.min(targetScrollTop, container.scrollTop + step);
       this.lastScrollTop = container.scrollTop;
+
+      if (container.scrollTop <= previousScrollTop + 0.1 && distance > 1) {
+        this.stalledFrames += 1;
+      } else {
+        this.stalledFrames = 0;
+      }
+
+      if (this.stalledFrames >= STALL_FRAME_LIMIT) {
+        // Twitch replaced or re-parented the actual scroller. Re-discover it on
+        // the next watchdog tick instead of keeping a dead RAF loop alive.
+        this.unbindChat();
+        return;
+      }
 
       this.animationFrame = requestAnimationFrame((nextTime) => this.animate(nextTime));
     }

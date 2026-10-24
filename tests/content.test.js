@@ -6,8 +6,10 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const listeners = new Map();
+const windowListeners = new Map();
 const frames = [];
 let observerCallback;
+let watchdogCallback;
 
 const scrollContainer = {
   clientHeight: 400,
@@ -37,8 +39,13 @@ const context = {
   },
   window: {
     getComputedStyle: () => ({ overflowY: 'auto' }),
-    setInterval: () => 1,
-    addEventListener() {},
+    setInterval(callback) {
+      watchdogCallback = callback;
+      return 1;
+    },
+    addEventListener(type, callback) {
+      windowListeners.set(type, callback);
+    },
     removeEventListener() {}
   },
   chrome: {
@@ -98,5 +105,32 @@ scrollContainer.scrollHeight = 1120;
 observerCallback([{ addedNodes: [{}] }]);
 drainFrames();
 assert.equal(scrollContainer.scrollTop, 720, 'returning to the bottom should resume following');
+
+scrollContainer.scrollHeight = 1160;
+watchdogCallback();
+drainFrames();
+assert.equal(scrollContainer.scrollTop, 760, 'watchdog should catch height changes without DOM mutations');
+
+scrollContainer.scrollTop = 730;
+listeners.get('scroll')();
+scrollContainer.scrollHeight = 1200;
+observerCallback([{ addedNodes: [{}] }]);
+drainFrames();
+assert.equal(scrollContainer.scrollTop, 800, 'Twitch virtual-list repositioning should not pause following');
+
+listeners.get('pointerdown')();
+windowListeners.get('blur')();
+scrollContainer.scrollHeight = 1240;
+watchdogCallback();
+drainFrames();
+assert.equal(scrollContainer.scrollTop, 840, 'lost pointerup should recover when the window loses focus');
+
+listeners.get('pointerdown')();
+scrollContainer.scrollTop = 500;
+listeners.get('scroll')();
+windowListeners.get('pointerup')();
+scrollContainer.scrollHeight = 1280;
+observerCallback([{ addedNodes: [{}] }]);
+assert.equal(frames.length, 0, 'dragging the scrollbar upward should pause following');
 
 console.log('content scroll behavior: OK');
