@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "Wika"
+  },
+  "automatic": {
+    "message": "Awtomatiko"
+  },
   "extensionDescription": {
     "message": "Maayos na sinusundan ang Twitch chat. Compatible sa 7TV."
   },

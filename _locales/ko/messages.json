@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "언어"
+  },
+  "automatic": {
+    "message": "자동"
+  },
   "extensionDescription": {
     "message": "Twitch 채팅을 부드럽게 따라갑니다. 7TV 호환."
   },

@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "भाषा"
+  },
+  "automatic": {
+    "message": "स्वचालित"
+  },
   "extensionDescription": {
     "message": "Twitch चैट को सहजता से फ़ॉलो करता है। 7TV के साथ संगत।"
   },

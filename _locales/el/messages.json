@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "Γλώσσα"
+  },
+  "automatic": {
+    "message": "Αυτόματα"
+  },
   "extensionDescription": {
     "message": "Ακολουθεί ομαλά τη συνομιλία Twitch. Συμβατό με 7TV."
   },

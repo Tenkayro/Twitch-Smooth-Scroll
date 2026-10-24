@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "Språk"
+  },
+  "automatic": {
+    "message": "Automatisk"
+  },
   "extensionDescription": {
     "message": "Følger Twitch-chatten jevnt. Kompatibel med 7TV."
   },

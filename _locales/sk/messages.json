@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "Jazyk"
+  },
+  "automatic": {
+    "message": "Automaticky"
+  },
   "extensionDescription": {
     "message": "Plynulo sleduje chat na Twitchi. Kompatibilné so 7TV."
   },

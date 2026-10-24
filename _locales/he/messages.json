@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "שפה"
+  },
+  "automatic": {
+    "message": "אוטומטי"
+  },
   "extensionDescription": {
     "message": "עוקב בצורה חלקה אחר הצ׳אט של Twitch. תואם ל־7TV."
   },

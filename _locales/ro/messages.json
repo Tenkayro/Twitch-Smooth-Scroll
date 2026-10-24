@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "Limbă"
+  },
+  "automatic": {
+    "message": "Automat"
+  },
   "extensionDescription": {
     "message": "Urmărește fluent chatul Twitch. Compatibil cu 7TV."
   },

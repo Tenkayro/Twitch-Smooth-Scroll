@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "Nyelv"
+  },
+  "automatic": {
+    "message": "Automatikus"
+  },
   "extensionDescription": {
     "message": "Finoman követi a Twitch csevegést. Kompatibilis a 7TV-vel."
   },

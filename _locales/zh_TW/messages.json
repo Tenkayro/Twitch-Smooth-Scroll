@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "語言"
+  },
+  "automatic": {
+    "message": "自動"
+  },
   "extensionDescription": {
     "message": "流暢跟隨 Twitch 聊天。相容 7TV。"
   },

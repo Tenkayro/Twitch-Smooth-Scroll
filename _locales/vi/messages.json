@@ -2,6 +2,12 @@
   "extensionName": {
     "message": "Twitch Smooth Scroll"
   },
+  "language": {
+    "message": "Ngôn ngữ"
+  },
+  "automatic": {
+    "message": "Tự động"
+  },
   "extensionDescription": {
     "message": "Cuộn theo trò chuyện Twitch mượt mà. Tương thích với 7TV."
   },
