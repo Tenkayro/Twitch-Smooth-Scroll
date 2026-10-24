@@ -1,6 +1,6 @@
 {
   "name": "twitch-smooth-scroll",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "private": true,
   "scripts": {
     "test": "node --check content.js && node --check popup.js && node tests/content.test.js",
