@@ -25,8 +25,8 @@
 
   const FOLLOW_DISTANCE_PX = 240;
   const RESUME_DISTANCE_PX = 48;
-  const WATCHDOG_INTERVAL_MS = 500;
-  const STALL_FRAME_LIMIT = 12;
+  const WATCHDOG_INTERVAL_MS = 250;
+  const SCROLL_STYLE_ID = 'twitch-smooth-scroll-control';
 
   class TwitchSmoothScroll {
     constructor() {
@@ -41,7 +41,6 @@
       this.pointerActive = false;
       this.pointerStartScrollTop = 0;
       this.followingBeforePointer = true;
-      this.stalledFrames = 0;
 
       this.onMutations = this.onMutations.bind(this);
       this.onScroll = this.onScroll.bind(this);
@@ -150,6 +149,7 @@
       if (isCurrent) return;
 
       this.unbindChat();
+      this.installScrollControlStyle();
       this.messageContainer = chat.messageContainer;
       this.scrollContainer = chat.scrollContainer;
       this.lastScrollTop = this.scrollContainer.scrollTop;
@@ -188,7 +188,21 @@
       this.messageContainer = null;
       this.scrollContainer = null;
       this.pointerActive = false;
-      this.stalledFrames = 0;
+      document.getElementById?.(SCROLL_STYLE_ID)?.remove();
+    }
+
+    installScrollControlStyle() {
+      if (document.getElementById?.(SCROLL_STYLE_ID) || !document.createElement) return;
+
+      const style = document.createElement('style');
+      style.id = SCROLL_STYLE_ID;
+      style.textContent = `
+        [data-a-target="chat-scroller"] {
+          scroll-behavior: auto !important;
+          overflow-anchor: none !important;
+        }
+      `;
+      (document.head || document.documentElement)?.appendChild(style);
     }
 
     watchdogTick() {
@@ -227,7 +241,12 @@
       }
     }
 
-    onPointerDown() {
+    onPointerDown(event) {
+      // Pointer events from usernames, emotes and 7TV controls bubble through
+      // the scroller. Only the scroller itself can represent interaction with
+      // its native scrollbar; ordinary chat clicks must never pause following.
+      if (event?.target !== this.scrollContainer || (event.button ?? 0) !== 0) return;
+
       this.followingBeforePointer = this.following;
       this.pointerStartScrollTop = this.scrollContainer?.scrollTop ?? 0;
       this.pointerActive = true;
@@ -313,35 +332,20 @@
       if (distance <= 0.5) {
         container.scrollTop = targetScrollTop;
         this.lastScrollTop = targetScrollTop;
-        this.stalledFrames = 0;
         return;
       }
 
       const elapsed = Math.min(50, Math.max(1, time - this.lastFrameTime));
       this.lastFrameTime = time;
 
-      // Adapted from Twitch ToolKit's short, linear chat-follow animation.
-      // One shared animation is retargeted every frame so fast 7TV/Twitch updates
-      // never create competing requestAnimationFrame loops.
-      const baseDuration = Math.min(260, Math.max(80, distance * 0.22));
+      // One shared animation is retargeted every frame. A short adaptive
+      // duration lets it catch up even while a busy chat keeps growing, without
+      // creating Twitch ToolKit-style competing animation loops.
+      const baseDuration = Math.min(180, Math.max(72, distance * 0.12));
       const duration = baseDuration / this.settings.speed;
-      const step = Math.max(0.75, distance * Math.min(1, elapsed / duration));
-      const previousScrollTop = container.scrollTop;
+      const step = Math.max(1, distance * Math.min(1, elapsed / duration));
       container.scrollTop = Math.min(targetScrollTop, container.scrollTop + step);
       this.lastScrollTop = container.scrollTop;
-
-      if (container.scrollTop <= previousScrollTop + 0.1 && distance > 1) {
-        this.stalledFrames += 1;
-      } else {
-        this.stalledFrames = 0;
-      }
-
-      if (this.stalledFrames >= STALL_FRAME_LIMIT) {
-        // Twitch replaced or re-parented the actual scroller. Re-discover it on
-        // the next watchdog tick instead of keeping a dead RAF loop alive.
-        this.unbindChat();
-        return;
-      }
 
       this.animationFrame = requestAnimationFrame((nextTime) => this.animate(nextTime));
     }

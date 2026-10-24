@@ -10,6 +10,7 @@ const windowListeners = new Map();
 const frames = [];
 let observerCallback;
 let watchdogCallback;
+let frameTime = 0;
 
 const scrollContainer = {
   clientHeight: 400,
@@ -38,7 +39,7 @@ const messageContainer = {
 
 const context = {
   console,
-  performance: { now: () => 0 },
+  performance: { now: () => frameTime },
   document: {
     body: {},
     querySelector(selector) {
@@ -90,12 +91,11 @@ assert.ok(
 );
 
 function drainFrames(limit = 500) {
-  let time = 0;
   let count = 0;
   while (frames.length && count < limit) {
     const frame = frames.shift();
-    time += 16;
-    frame(time);
+    frameTime += 16;
+    frame(frameTime);
     count += 1;
   }
   assert.ok(count < limit, 'animation should settle');
@@ -105,6 +105,31 @@ scrollContainer.scrollHeight = 1040;
 observerCallback([{ addedNodes: [{}] }]);
 drainFrames();
 assert.equal(scrollContainer.scrollTop, 640, 'new message should be followed to the bottom');
+
+for (let message = 0; message < 120; message += 1) {
+  scrollContainer.scrollHeight += 24;
+  observerCallback([{ addedNodes: [{}] }]);
+  assert.equal(frames.length, 1, 'a busy chat must keep exactly one animation loop');
+  const frame = frames.shift();
+  frameTime += 16;
+  frame(frameTime);
+}
+drainFrames();
+assert.equal(
+  scrollContainer.scrollTop,
+  scrollContainer.scrollHeight - scrollContainer.clientHeight,
+  'continuous high-volume messages should still settle smoothly at the bottom'
+);
+
+listeners.get('pointerdown')({ target: {}, button: 0 });
+scrollContainer.scrollHeight += 40;
+observerCallback([{ addedNodes: [{}] }]);
+drainFrames();
+assert.equal(
+  scrollContainer.scrollTop,
+  scrollContainer.scrollHeight - scrollContainer.clientHeight,
+  'clicking chat content must not be mistaken for dragging the scrollbar'
+);
 
 listeners.get('wheel')({ deltaY: -100 });
 scrollContainer.scrollTop = 400;
@@ -131,7 +156,7 @@ observerCallback([{ addedNodes: [{}] }]);
 drainFrames();
 assert.equal(scrollContainer.scrollTop, 800, 'Twitch virtual-list repositioning should not pause following');
 
-listeners.get('pointerdown')();
+listeners.get('pointerdown')({ target: scrollContainer, button: 0 });
 windowListeners.get('blur')();
 scrollContainer.scrollHeight = 1240;
 watchdogCallback();
@@ -145,7 +170,7 @@ assert.equal(scrollContainer.scrollTop, 840, 'an instant Twitch jump should be r
 drainFrames();
 assert.equal(scrollContainer.scrollTop, 880, 'an instant Twitch jump should be replayed smoothly');
 
-listeners.get('pointerdown')();
+listeners.get('pointerdown')({ target: scrollContainer, button: 0 });
 scrollContainer.scrollTop = 500;
 listeners.get('scroll')();
 windowListeners.get('pointerup')();
