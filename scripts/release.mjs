@@ -88,6 +88,90 @@ async function runTests() {
   }
 }
 
+async function run(command, args) {
+  return execFileAsync(command, args, {
+    cwd: ROOT_DIR,
+    encoding: 'utf8',
+    windowsHide: true
+  });
+}
+
+async function prepareGitHubRelease(tagName) {
+  try {
+    await run('gh', ['--version']);
+    await run('gh', ['auth', 'status']);
+  } catch {
+    throw new Error('GitHub CLI is missing or not logged in. Run: gh auth login');
+  }
+
+  const { stdout: statusOutput } = await run('git', ['status', '--porcelain']);
+  if (statusOutput.trim()) {
+    throw new Error('Commit or stash all current changes before creating a GitHub Release.');
+  }
+
+  const { stdout: branchOutput } = await run('git', ['branch', '--show-current']);
+  const branch = branchOutput.trim();
+  if (!branch) throw new Error('GitHub releases cannot be created from a detached HEAD.');
+
+  try {
+    await run('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}']);
+  } catch {
+    throw new Error(`Branch ${branch} has no upstream. Push it with -u before releasing.`);
+  }
+
+  const { stdout: syncOutput } = await run('git', [
+    'rev-list',
+    '--left-right',
+    '--count',
+    'HEAD...@{u}'
+  ]);
+  const [ahead, behind] = syncOutput.trim().split(/\s+/).map(Number);
+  if (ahead !== 0 || behind !== 0) {
+    throw new Error(`Branch ${branch} must be synchronized with its upstream before releasing.`);
+  }
+
+  try {
+    await run('gh', ['release', 'view', tagName]);
+    throw new Error(`GitHub Release ${tagName} already exists.`);
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('already exists')) throw error;
+  }
+
+  return { branch };
+}
+
+async function publishGitHubRelease({ branch, nextVersion, outputPath, onCommitted }) {
+  const tagName = `v${nextVersion}`;
+  await run('git', ['add', '--', 'manifest.json', 'package.json', 'package-lock.json']);
+  await run('git', ['commit', '-m', `chore: release ${tagName}`]);
+  onCommitted();
+  await run('git', ['push']);
+
+  await run('gh', [
+    'release',
+    'create',
+    tagName,
+    outputPath,
+    '--title',
+    `Twitch Smooth Scroll ${tagName}`,
+    '--generate-notes',
+    '--latest',
+    '--target',
+    branch
+  ]);
+
+  const { stdout } = await run('gh', [
+    'release',
+    'view',
+    tagName,
+    '--json',
+    'url',
+    '--jq',
+    '.url'
+  ]);
+  return stdout.trim();
+}
+
 async function validatePackageFiles() {
   for (const entry of PACKAGE_FILES) {
     await access(path.join(ROOT_DIR, entry));
@@ -166,6 +250,28 @@ async function main() {
     );
   }
 
+  const publishToGitHub = cancelIfNeeded(
+    await p.confirm({
+      message: 'Create a GitHub Release and upload the ZIP?',
+      initialValue: true
+    })
+  );
+
+  let githubContext = null;
+  if (publishToGitHub) {
+    const preflight = p.spinner();
+    preflight.start('Checking GitHub and Git status');
+    try {
+      githubContext = await prepareGitHubRelease(`v${nextVersion}`);
+      preflight.stop('GitHub is ready');
+    } catch (error) {
+      preflight.stop('GitHub preflight failed');
+      p.log.error(error instanceof Error ? error.message : String(error));
+      process.exitCode = 1;
+      return;
+    }
+  }
+
   const fileName = `twitch-smooth-scroll-v${nextVersion}.zip`;
   const outputPath = path.join(RELEASE_DIR, fileName);
   const temporaryPath = `${outputPath}.tmp`;
@@ -181,7 +287,9 @@ async function main() {
     await p.confirm({
       message: outputExists
         ? `Release v${nextVersion} already exists. Replace it?`
-        : `Create release v${nextVersion}?`,
+        : publishToGitHub
+          ? `Create and publish GitHub Release v${nextVersion}?`
+          : `Create local release v${nextVersion}?`,
       initialValue: !outputExists
     })
   );
@@ -192,6 +300,8 @@ async function main() {
 
   const spinner = p.spinner();
   let metadataChanged = false;
+  let releaseCommitted = false;
+  let githubUrl = '';
   try {
     spinner.start('Validating extension');
     await validatePackageFiles();
@@ -215,26 +325,59 @@ async function main() {
     if (outputExists) await rm(outputPath, { force: true });
     await rename(temporaryPath, outputPath);
     const archiveStats = await stat(outputPath);
+
+    if (publishToGitHub) {
+      spinner.message('Committing and pushing release');
+      githubUrl = await publishGitHubRelease({
+        branch: githubContext.branch,
+        nextVersion,
+        outputPath,
+        onCommitted: () => {
+          releaseCommitted = true;
+        }
+      });
+    }
     spinner.stop('Release created');
 
     p.note(
       [
         `Version: ${nextVersion}`,
         `File: release/${fileName}`,
-        `Size: ${(archiveStats.size / 1024).toFixed(1)} KB`
+        `Size: ${(archiveStats.size / 1024).toFixed(1)} KB`,
+        ...(githubUrl ? [`GitHub: ${githubUrl}`] : [])
       ].join('\n'),
       'Release'
     );
-    p.outro('Ready to upload.');
+    p.outro(githubUrl ? 'Published on GitHub.' : 'Ready to upload.');
   } catch (error) {
-    if (metadataChanged) {
+    if (metadataChanged && !releaseCommitted) {
       await writeFile(MANIFEST_PATH, originalManifestSource, 'utf8');
       await writeFile(PACKAGE_JSON_PATH, originalPackageSource, 'utf8');
       await writeFile(PACKAGE_LOCK_PATH, originalLockSource, 'utf8');
+      if (publishToGitHub) {
+        try {
+          await run('git', [
+            'restore',
+            '--staged',
+            '--',
+            'manifest.json',
+            'package.json',
+            'package-lock.json'
+          ]);
+        } catch {
+          // Nothing was staged, or Git already restored the index.
+        }
+      }
     }
     await rm(temporaryPath, { force: true });
     spinner.stop('Release failed');
     p.log.error(error instanceof Error ? error.message : String(error));
+    if (releaseCommitted) {
+      p.log.warn('The release commit may already exist locally or remotely. Inspect Git status before retrying.');
+      p.log.info(
+        `If the push succeeded, retry publishing with: gh release create v${nextVersion} "${outputPath}" --generate-notes --latest`
+      );
+    }
     process.exitCode = 1;
   }
 }

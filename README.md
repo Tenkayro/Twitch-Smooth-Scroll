@@ -1,34 +1,68 @@
 # Twitch Smooth Scroll
 
-Ein schlankes Chrome-/Chromium-Addon, das neue Twitch-Chatnachrichten weich ins Bild scrollt.
+A lightweight Chrome/Chromium extension that smoothly follows new Twitch chat messages.
 
-- Autor: **Tenkayro**
+- Author: **Tenkayro**
 - Manifest V3
-- Mit normalem Twitch-Chat und 7TV nutzbar
-- Pausiert automatisch, wenn man im Chat nach oben scrollt
-- Verändert weder Nachrichten noch Emotes, Badges oder das 7TV-DOM
+- Compatible with the native Twitch chat and 7TV
+- Automatically pauses when you scroll up in chat
+- Does not modify messages, emotes, badges, or the 7TV DOM
+- Supports automatic and manual language selection
 
 ## Installation
 
-1. In Chrome `chrome://extensions/` öffnen.
-2. Oben rechts den **Entwicklermodus** aktivieren.
-3. **Entpackte Erweiterung laden** wählen.
-4. Diesen Ordner auswählen.
-5. Eine bereits offene Twitch-Seite einmal neu laden.
+1. Open `chrome://extensions/` in Chrome.
+2. Enable **Developer mode** in the top-right corner.
+3. Click **Load unpacked**.
+4. Select this project directory.
+5. Reload any Twitch tabs that were already open.
 
-Über das Erweiterungssymbol lassen sich Smooth Scroll, Geschwindigkeit und Sprache einstellen.
+Use the extension icon to enable or disable smooth scrolling, adjust its speed, and select a language.
 
-> Falls Twitch ToolKit parallel installiert bleibt, dort dessen eigene Option „Smooth Scrolling“ deaktivieren, damit nicht zwei Scroll-Animationen gleichzeitig laufen.
+> If Twitch ToolKit is installed at the same time, disable its own **Smooth Scrolling** option to prevent two scroll animations from competing with each other.
 
-## Release erstellen
+## Creating a release
+
+Install the development dependencies once:
 
 ```bash
 npm install
+```
+
+Start the interactive release workflow:
+
+```bash
 npm run release
 ```
 
-Der interaktive Terminal-Dialog erhöht die Version als Patch, Minor, Major oder auf einen eigenen Wert im Format `X.Y.Z`. Manifest und npm-Metadaten werden gemeinsam aktualisiert. Anschließend wird ausschließlich der Inhalt der Erweiterung als `release/twitch-smooth-scroll-vVERSION.zip` gepackt.
+The terminal interface supports Patch, Minor, Major, and custom `X.Y.Z` versions. It validates the extension, runs the tests, updates the manifest and npm metadata, and creates a clean archive at:
 
-## Technischer Hinweis
+```text
+release/twitch-smooth-scroll-vVERSION.zip
+```
 
-Die Scroll-Idee und die kurze lineare Animation sind aus der lokal bereitgestellten Twitch-ToolKit-Version abgeleitet. Diese Erweiterung enthält ausschließlich die Smooth-Scroll-Funktion und besitzt eine eigene, auf Twitch-Navigation und 7TV ausgelegte Container-Erkennung.
+Only files required by the extension are included in the archive. Tests, development dependencies, Git data, source release scripts, and previous releases are excluded.
+
+## Publishing a GitHub Release
+
+The release workflow can also:
+
+1. Create a version commit.
+2. Push the current branch.
+3. Create a `vX.Y.Z` Git tag and GitHub Release.
+4. Generate release notes automatically.
+5. Upload the extension ZIP as a release asset.
+6. Mark the release as the latest version.
+
+Before publishing to GitHub:
+
+- Install the GitHub CLI (`gh`).
+- Sign in with `gh auth login`.
+- Commit or stash all existing changes.
+- Ensure the current branch has an upstream and is fully synchronized.
+
+The workflow stops before changing the version if these checks fail.
+
+## Technical notes
+
+The scrolling concept and short linear animation were derived from the locally provided Twitch ToolKit version. This extension contains only the smooth-scrolling functionality and uses its own chat-container detection designed for Twitch navigation and 7TV compatibility.
