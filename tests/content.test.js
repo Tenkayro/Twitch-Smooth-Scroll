@@ -24,8 +24,16 @@ const scrollContainer = {
 };
 
 const messageContainer = {
+  // Mirrors Twitch's real inner message element: it can be taller than its
+  // viewport even though the parent owns the actual scrollTop.
+  clientHeight: 400,
+  scrollHeight: 1000,
+  scrollTop: 0,
   isConnected: true,
-  parentElement: scrollContainer
+  parentElement: scrollContainer,
+  closest(selector) {
+    return selector.includes('chat-scroller') ? scrollContainer : null;
+  }
 };
 
 const context = {
@@ -75,6 +83,11 @@ const context = {
 vm.createContext(context);
 const source = fs.readFileSync(path.join(__dirname, '..', 'content.js'), 'utf8');
 vm.runInContext(source, context);
+
+assert.ok(
+  listeners.has('scroll') && listeners.has('wheel'),
+  'the outer Twitch chat-scroller must receive the scroll listeners'
+);
 
 function drainFrames(limit = 500) {
   let time = 0;

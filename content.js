@@ -16,6 +16,7 @@
 
   const SCROLL_CONTAINER_SELECTORS = [
     '[data-a-target="chat-scroller"]',
+    '.scrollable-area[data-a-target="chat-scroller"]',
     '[data-test-selector="chat-scrollable-area__scroll-container"]',
     '.chat-scrollable-area__scroll-container',
     '.simplebar-scroll-content',
@@ -115,12 +116,15 @@
       const messageContainer = this.queryFirst(MESSAGE_CONTAINER_SELECTORS);
       if (!messageContainer) return null;
 
+      const closestKnownScroller = messageContainer.closest?.(
+        SCROLL_CONTAINER_SELECTORS.join(', ')
+      );
+
       const scrollContainer =
-        // Match Twitch ToolKit's working behavior first: on Twitch this message
-        // container is often scrollable even when its overflow is "hidden".
-        (messageContainer.scrollHeight > messageContainer.clientHeight + 1
-          ? messageContainer
-          : null) ||
+        // Current Twitch DOM: .scrollable-area[data-a-target="chat-scroller"]
+        // wraps the message container and owns scrollTop. The inner message
+        // container may report a large scrollHeight but is not itself scrollable.
+        closestKnownScroller ||
         this.findScrollableAncestor(messageContainer) ||
         this.queryFirst(SCROLL_CONTAINER_SELECTORS) ||
         messageContainer;
